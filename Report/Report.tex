@@ -22,13 +22,13 @@
 
 \newpage
 \chapter{Discovery}
-Let's consider product of two \(d\) degree polynomials \(A(x)\) & \(B(x)\) is \(C(x)\).
-\begin{math}
-	
-	A(x) = a_0 + a_1x + a_2x^2 + \ldots + a_{d-1}x^{d-1} + a_dx^d \\
-	B(x) = b_0 + b_1x + b_2x^2 + \ldots + b_{d-1}x^{d-1} + b_dx^d \\
-	C(x) = c_0 + c_1x + c_2x^2 + \ldots + c_{2d-1}x^{2d-1} + c_{2d}x^{2d}
-\end{math}
+Let's consider product of two \(d\) degree polynomials \(A(x)\) and \(B(x)\) is \(C(x)\).
+
+$$
+A(x) = a_0 + a_1x + a_2x^2 + \ldots + a_{d-1}x^{d-1} + a_dx^d 
+$$	
+$$ B(x) = b_0 + b_1x + b_2x^2 + \ldots + b_{d-1}x^{d-1} + b_dx^d $$
+$$ C(x) = c_0 + c_1x + c_2x^2 + \ldots + c_{2d-1}x^{2d-1} + c_{2d}x^{2d} $$
 
 The coefficients of \(C(x)\) can be calculated as follows:
 \begin{math}
@@ -51,6 +51,7 @@ The polynomial \(A(x)\) can be represented as a sequence of its values at \(d+1\
 
 We can calculate the convolution of two sequences of values in \(O(d)\) operations. So, we want to convert the coefficients of the polynomials to the values of the polynomials at \(d+1\) distinct points. This can be done using the Fast Fourier Transform (FFT).
 \section{Bigger Picture} 
+
 The goal is to convert the coefficient representation of $A(x) $ and $B(x)$ to the value representation. Then we can calculate the convolution of the two sequences of values. Finally, we can convert the value representation of the product of the two polynomials to the coefficient representation. \newline
 Conversion of the coefficient representation to the value representation can be done using the FFT. And the reverse process can be done using the inverse FFT. \newline
 
@@ -75,7 +76,7 @@ We can divide the polynomial into two parts: the even terms and the odd terms. T
 	$$A(-x_i) = A_e(x_i^2) - x_iA_o(x_i^2)$$
 
 here, \(A_e(x)\) is the polynomial with the even terms and \(A_o(x)\) is the polynomial with the odd terms. Now, both \(A_e(x)\) and \(A_o(x)\) are of degree \(d/2\). 
-As both \(A_e(x)\) and \(A_o(x)\) are functions of \(x^2\), we can evaluate \(A(x)\) using \pm pairs of points. Hence, we need to evaluate \(A_e(x)\) and \(A_o(x)\) at \(d/2 + 1\) distinct points. Improvement!!
+As both $A_e(x)$ and $A_o(x)$ are functions of $x^2$, we can evaluate \(A(x)\) using $\pm$ pairs of points. Hence, we need to evaluate \(A_e(x)\) and \(A_o(x)\) at \(d/2 + 1\) distinct points. Improvement!!
 
 \section{Generalization}
 We can generalize this to any degree polynomial.
