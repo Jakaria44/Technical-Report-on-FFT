@@ -50,7 +50,7 @@ $n$ in
 $O(n \log n)$ time, which is better than the trivial multiplication which takes 
 $O(n^2)$ time.In the similar way two number of length $n$ can be multiplied by FFT in $O(n \log n)$ time. \linebreak 
 
-In 1805, Karl Fredrich Gauss developed a method for fast calculation of Discrete Fourier Transform (DFT). But he never published it. Later on 1965, James Cooley and John Tukey published a very similar method. So, the credit of discovering the FFT is attributed to Cooley and Tukey. In fact the FFT has been discovered repeatedly before, but the importance of it was not understood before the inventions of modern computers. \\
+In 1805, Karl Fredrich Gauss developed a method for fast calculation of Discrete Fourier Transform (DFT).\cite{wiki} But he never published it. Later on 1965, James Cooley and John Tukey published a very similar method. So, the credit of discovering the FFT is attributed to Cooley and Tukey. In fact the FFT has been discovered repeatedly before, but the importance of it was not understood before the inventions of modern computers. \\
 
 
 Actually, the Fast Fourier Transform (FFT) is an algorithm to compute the Discrete Fourier Transform (DFT) and its inverse. It drastically reduces the computational complexity of computing
@@ -82,7 +82,7 @@ DFT is the discrete counterpart of the continuous Fourier Transform.
     \[ X[k] = \sum_{n=0}^{N-1} x[n] e^{-i2\pi kn/N} \]
     where $x[n]$ is the discrete signal, and $X[k]$ is its frequency domain representation.
       \end{itemize}
-Direct computation of DFT is of $O(N^2)$ complexity.
+Direct computation of DFT is of $O(N^2)$ complexity.\cite{cp_algo}
 % \pagebreak
 \subsection{Polynomial Representation}
 To understand the use of Discrete Fourier Transform let's take an example of a polynomial. The polynomial is of $(n-1)^{th}$ order where $n$ can be either power of 2 or not. If it is not a power of 2 then take some extra terms of higher order putting the coefficients of those terms $p_i$ 0. \\
@@ -160,15 +160,15 @@ Here we used again $P(x) = P_o(x^2) + x P_e(x^2)$ and the two identities $w^n = 
 Therefore we get the desired formulas for computing the whole vector $(y_k)$:
 \begin{align*} y_k &= y_k^o + w^k y_k^e, &\quad k = 0 \dots \frac{n}{2} - 1, \\ y_{k+n/2} &= y_k^o - w^k y_k^e, &\quad k = 0 \dots \frac{n}{2} - 1. \end{align*}
 
-Thus we learned how to compute the DFT in $O(n \log n)$ time.
-
+Thus we learned how to compute the DFT in $O(n \log n)$ time.\\
+To know more check this\cite{fftbook1} book.
 
 \chapter{Applications}
 FFT is the core component of frequency domain analysis, also known as spectrum analysis, in signal processing. It is widely used in data compression, spectral estimation, signal filtering, and other applications. Analysis in both the frequency and time domains can be done simultaneously using FFT variations like the short-time Fourier transform. These methods can be applied to a wide range of signals, including communication, radar, audio and speech, and other sensor data signals. Additionally, FFT is occasionally employed as a transitional step before more sophisticated signal processing methods. FFT is used for filtering and picture compression in image processing. In mathematics and physics, partial differential equations (PDEs) are also solved using FFT.
 \section{FFT in signal processing}
 FFT is most frequently used to convert signals from the time domain to the frequency domain.
 \includegraphics[scale=0.8]{images/t_f_dom.png}
-The fundamental algorithm used for time-frequency based signal analysis in many simulation programs, such as MATLAB, is FFT. The FFT algorithm was utilized by MATLAB's Signal Processing $Toolbox^{TM}$ to display spectograms and persistent spectrums, which are time-frequency views that display the proportion of a signal's duration that a certain frequency is present.\\
+The fundamental algorithm used for time-frequency based signal analysis in many simulation programs, such as MATLAB, is FFT. The FFT algorithm was utilized by MATLAB's\cite{matlab} Signal Processing $Toolbox^{TM}$ to display spectograms and persistent spectrums, which are time-frequency views that display the proportion of a signal's duration that a certain frequency is present.\\
 \begin{tabular}{c c}
     \includegraphics[scale=0.35]{images/signal_1.png}    &  \includegraphics[scale=0.35]{images/signal_2.png}
 \end{tabular}
@@ -277,7 +277,7 @@ We create the exact same polynomials, except that we set $b_i = 0$ if $P[m-i-1] 
 
 % \newpage
 
-\subsection*{More problems to explore}
+\subsection*{More problems to explore\cite{cf_1} \cite{cc_1}}
 
 \begin{itemize}
 
@@ -287,15 +287,15 @@ We create the exact same polynomials, except that we set $b_i = 0$ if $P[m-i-1] 
 
 \item \href{https://www.spoj.com/problems/ADAMATCH/}{ADAMATCH - Ada and Nucleobase}
 
-\item \href{https://codeforces.com/problemset/problem/954/I}{Yet Another String Matching Problem}
+\item \href{https://codeforces.com/problemset/problem/954/I}{Yet Another String Matching Problem\cite{cf_2}}
 
-\item \href{https://codeforces.com/problemset/problem/958/F3}{Lightsabers (hard)}
+\item \href{https://codeforces.com/problemset/problem/958/F3}{Lightsabers (hard)\cite{cf_3}}
 
-\item \href{https://codeforces.com/contest/1398/problem/G}{Running Competition}
+\item \href{https://codeforces.com/contest/1398/problem/G}{Running Competition\cite{cf_4}}
 
-\item \href{https://codeforces.com/contest/754/problem/E}{Dasha and cyclic table}
+\item \href{https://codeforces.com/contest/754/problem/E}{Dasha and cyclic table\cite{cf_5}}
 
-\item \href{https://codeforces.com/problemset/problem/1667/E}{Centroid Probabilities}
+\item \href{https://codeforces.com/problemset/problem/1667/E}{Centroid Probabilities\cite{cf_6}}
 
 \item \href{https://www.codechef.com/COOK112A/problems/MMNN01}{Expected Number of Customer}
 
@@ -317,5 +317,8 @@ The versatility of the FFT algorithm supports vital technologies like digital co
 Looking ahead, as technology continues to evolve, the FFT algorithm is poised to remain an indispensable asset, enabling further breakthroughs in fields ranging from data science to space exploration. Its impact on our understanding of the world and our ability to manipulate and interpret signals is undeniable, making it a subject of continued research and application for years to come.
 
 In essence, the FFT algorithm exemplifies the power of computational methods to unlock new insights and capabilities across a broad spectrum of disciplines, shaping the landscape of scientific inquiry and technological innovation.
-
+\newpage
+\renewcommand{\bibname}{References}
+\bibliographystyle{plain}
+\bibliography{ref}
 \end{document}
