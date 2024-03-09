@@ -1,0 +1,209 @@
+
+
+
+\documentclass{report}
+\usepackage{graphicx} % Required for inserting images
+\usepackage[a4paper, total={6in, 9in}]{geometry}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{minted}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Fast Fourier transform}
+    }
+
+\begin{document}
+
+\tableofcontents
+
+\newpage
+\chapter{Inverse FFT}
+Let the value representation of $P(x)$ of degree $n-1$  is given. We want to convert the value representation to coefficient representation. We can use the inverse FFT to do this. \newline
+
+Before we start, let's see another perspective of forward FFT or Evaluation.
+$$P(x) = p_0 + p_1x + p_2x^2 + ... + p_{n-1}x^{n-1}$$
+
+$$ P(x_0) = p_0 + p_1x_0 + p_2x_0^2 + ... + p_{n-1}x_0^{n-1}$$
+$$ P(x_1) = p_0 + p_1x_1 + p_2x_1^2 +... + p_{n-1}x_1^{n-1} $$
+$$ P(x_2) = p_0 + p_1x_2 + p_2x_2^2 + .. + p_{n-1}x_2^{n-1} $$
+
+$$ P(x_{n-1}) = p_0 + p_1x_{n-1} + p_2x_{n-1}^2 + ... + p_{n-1}x_{n-1}^{n-1} $$
+
+We can represent this as \textit{Matrix Multiplication} as follows:
+
+\begin{equation*}
+	\begin{bmatrix}
+					P(x_0) \\
+				 P(x_1)\\
+					P(x_2)\\
+					\vdots \\
+					P(x_{n-1}) \\
+			\end{bmatrix}
+			=
+			\begin{bmatrix}
+					1 & x_0 & x_0^2 & \cdots & x_0^{n-1} \\
+					1 & x_1 & x_1^2 & \cdots & x_1^{n-1} \\
+					1 & x_2 & x_2^2 & \cdots & x_2^{n-1} \\
+					\vdots & \vdots & \vdots & \ddots & \vdots \\
+					1 & x_{n-1} & x_{n-1}^2 & \cdots & x_{n-1}^{n-1} \\
+			\end{bmatrix}
+			\begin{bmatrix}
+					p_0 \\
+					p_1 \\
+					p_2 \\
+					\vdots \\
+					p_{n-1} \\
+			\end{bmatrix}
+	\end{equation*}
+\newline
+
+In forward FFT, the $n$th roots of unity was used to evaluate a polynomial of $n-1$ degree. So, we can replace $x_k$ with $\omega^k$, where $\omega_i = e^{\frac{2\pi i}{n}}$
+
+\begin{equation*}
+  \begin{bmatrix}
+    P(w^0) \\
+    P(w^1) \\
+    P(w^2) \\
+    \vdots \\
+    P(w^{n-1})
+  \end{bmatrix} 
+    = 
+    \begin{bmatrix} 
+      1     & 1     & 1     & \cdots & 1    \\ 
+      1     & w     & w^2   & \cdots & w^{n-1} \\ 
+      1     & w^2   & w^4   & \cdots & w^{2(n-1)} \\
+      \vdots & \vdots & \vdots  & \ddots & \vdots \\
+      1 & w^{n-1} & w^{2(n-1)}  & \cdots & w^{(n-1)(n-1)} 
+    \end{bmatrix} 
+    \begin{bmatrix}
+        p_0 \\
+        p_1 \\
+        p_2 \\
+        \vdots \\
+        p_{n-1}
+    \end{bmatrix}
+\end{equation*}
+This matrix is called the \textit{Vandermonde Matrix}.
+Here we need to get the values of $[p_0, p_1, ... , p_{n-1}]$. We can rewrite the equation as follows:
+\begin{equation*}
+    \begin{bmatrix}
+        p_0 \\
+        p_1 \\
+        p_2 \\
+        \vdots \\
+        p_{n-1}
+    \end{bmatrix}
+    = 
+    {\begin{bmatrix} 
+      1     & 1     & 1     & \cdots & 1    \\ 
+      1     & w     & w^2   & \cdots & w^{n-1} \\ 
+      1     & w^2   & w^4   & \cdots & w^{2(n-1)} \\
+      \vdots & \vdots & \vdots  & \ddots & \vdots \\
+      1 & w^{n-1} & w^{2(n-1)}  & \cdots & w^{(n-1)(n-1)} 
+    \end{bmatrix} }^{-1}
+    \begin{bmatrix}
+    P(w^0) \\
+    P(w^1) \\
+    P(w^2) \\
+    \vdots \\
+    P(w^{n-1})
+  \end{bmatrix}     
+\end{equation*}
+
+\begin{equation*}
+\implies 
+    \begin{bmatrix}
+        p_0 \\
+        p_1 \\
+        p_2 \\
+        \vdots \\
+        p_{n-1}
+    \end{bmatrix}
+    = 
+    \frac{1}{n}
+  \begin{bmatrix} 
+  1     & 1     & 1     & \cdots & 1    \\ 
+  1     & w^-1     & w^{-2}   & \cdots & w^{-n-1} \\ 
+  1     & w^{-2}   & w^{-4}   & \cdots & w^{-2(n-1)} \\
+  \vdots & \vdots & \vdots  & \ddots & \vdots \\
+  1 & w^{-n-1} & w^{-2(n-1)}  & \cdots & w^{-(n-1)(n-1)} 
+\end{bmatrix} 
+    \begin{bmatrix}
+    P(w^0) \\
+    P(w^1) \\
+    P(w^2) \\
+    \vdots \\
+    P(w^{n-1})
+  \end{bmatrix}     
+\end{equation*}
+The inverse matrix and original matrix look quiet similar! The $\omega$ in the original matrix is now $\frac{1}{n} \omega^{-1}$.
+So, we get the formula as: 
+$$p_k = \frac{1}{n} \sum_{j=0}^{n-1} y_j w_n^{-k j}$$
+
+
+
+
+\chapter{Implementation}
+\section{FFT}
+\begin{minted}{python}
+import cmath
+import math
+
+def FFT(P):
+	# P - [p_0, p_1, p_2, ... , p_n-1] coeff representation
+	n = len(P) # n = 2^k
+	if n == 1:
+		return P
+	omega = cmath.exp(2 * cmath.pi * 1j / n)
+
+	# divide the polynomial into even and odd terms
+	P_even, P_odd = P[0::2], P[1::2]
+	# get the value representation of the even and odd terms
+	y_even, y_odd = FFT(P_even), FFT(P_odd)
+	# initialize the value representation of the polynomial P
+	y = [0] * n
+
+	# combine the value representation of the even and odd terms
+	for j in range(n/2):
+		y[j] = P_even[j] + omega**j * P_odd[j]
+		y[j + n/2] = P_even[j] - omega**j * P_odd[j]
+
+	return y
+\end{minted}
+
+\section{Inverse FFT} 
+
+\begin{minted}{python}
+import cmath
+import math
+
+def IFFT(P):
+	# P - [p_0, p_1, p_2, ... , p_n-1] coeff representation
+	n = len(P) # n = 2^k
+	if n == 1:
+		return P
+
+        # Here's the difference from the forward FFT:
+	omega = cmath.exp(-2 * cmath.pi * 1j / n) / n
+
+	# divide the polynomial into even and odd terms
+	P_even, P_odd = P[0::2], P[1::2]
+	# get the value representation of the even and odd terms
+	y_even, y_odd = IFFT(P_even), IFFT(P_odd)
+	# initialize the value representation of the polynomial P
+	y = [0] * n
+
+	# combine the value representation of the even and odd terms
+	for j in range(n/2):
+		y[j] = P_even[j] + omega**j * P_odd[j]
+		y[j + n/2] = P_even[j] - omega**j * P_odd[j]
+
+	return y
+\end{minted}
+
+
+\end{document}
