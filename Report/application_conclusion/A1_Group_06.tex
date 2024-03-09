@@ -6,6 +6,7 @@
 \usepackage{minted}
 \usepackage{float}
 \usepackage{hyperref}
+\usepackage{tikz}
 \hypersetup{
     colorlinks=true,
     linkcolor=black,
@@ -32,9 +33,9 @@
     \vspace{1.5cm}
     {\large \textbf{Authors:} \par}
     \vspace{0.5cm}
-    {\large Tanvirul Islam Turad (2005011) \par}
+    {\large Md. Tanvirul Islam Turad (2005011) \par}
     {\large Tanvir Hossain (2005014) \par}
-    {\large MD. Jakaria Hossain (2005026)\par}
+    {\large Md. Jakaria Hossain (2005026)\par}
     \vspace{2cm}
     {\large Date: \today \par}
 \end{titlepage}
@@ -159,42 +160,69 @@ Thus we learned how to compute the DFT in $O(n \log n)$ time.\\
 To know more check this\cite{fftbook1} book.
 
 \chapter{Discovery}
-Let's consider product of two \(d\) degree polynomials \(A(x)\) \& \(B(x)\) is \(C(x)\).
-\begin{math}
-	A(x) = a_0 + a_1x + a_2x^2 + \ldots + a_{d-1}x^{d-1} + a_dx^d \\
-	B(x) = b_0 + b_1x + b_2x^2 + \ldots + b_{d-1}x^{d-1} + b_dx^d \\
-	C(x) = c_0 + c_1x + c_2x^2 + \ldots + c_{2d-1}x^{2d-1} + c_{2d}x^{2d}
-\end{math}
+
+
+\section{Convolution}
+Let's consider product of two \(d\) degree polynomials \(A(x)\) \& \(B(x)\) is \(C(x)\). This product is the convolution of two coefficient sequences.
+
+	$$A(x) = a_0 + a_1x + a_2x^2 + \ldots + a_{d-1}x^{d-1} + a_dx^d $$
+	$$B(x) = b_0 + b_1x + b_2x^2 + \ldots + b_{d-1}x^{d-1} + b_dx^d $$
+	$$C(x) = c_0 + c_1x + c_2x^2 + \ldots + c_{2d-1}x^{2d-1} + c_{2d}x^{2d}$$
 
 The coefficients of \(C(x)\) can be calculated as follows:
-\begin{math}
-	c_k = \sum_{i=0}^{k} a_ib_{k-i} \quad \text{for} \quad k = 0, 1, 2, \ldots, 2d
-\end{math}
+$$ c_k = \sum_{i=0}^{k} a_ib_{k-i} \quad \text{for} \quad k = 0, 1, 2, \ldots, 2d$$
 
 This calculation requires \(O(d^2)\) operations. Can we do better?
 
-\section{Convolution}
-The product of two polynomials is called the convolution of the two coefficient sequences. The convolution of two sequences \(a_0, a_1, \ldots, a_{d-1}\) and \(b_0, b_1, \ldots, b_{d-1}\) is the sequence \(c_0, c_1, \ldots, c_{2d-1}\) where
-\begin{math}
-	c_k = \sum_{i=0}^{k} a_ib_{k-i} \quad \text{for} \quad k = 0, 1, 2, \ldots, 2d-1
-\end{math}
-
-The convolution of two sequences can be calculated in \(O(d^2)\) operations. Can we do better?
 
 \section{Value  Representation}
 
 The polynomial \(A(x)\) can be represented as a sequence of its values at \(d+1\) distinct points. For example, the polynomial \(A(x) = 3 + 4x + 5x^2\) can be represented as the sequence \((3, 7, 23)\) because \(A(0) = 3\), \(A(1) = 7\), and \(A(2) = 23\). The polynomial \(B(x)\) can also be represented as a sequence of its values at \(d+1\) distinct points. The product of two polynomials can be represented as the convolution of the two sequences of values.
 
-We can calculate the convolution of two sequences of values in \(O(d)\) operations. So, we want to convert the coefficients of the polynomials to the values of the polynomials at \(d+1\) distinct points. This can be done using the Fast Fourier Transform (FFT).
+We can calculate the convolution of two sequences of values in \(O(d)\) operations. So, we need to convert the coefficients of the polynomials to the values of the polynomials at \(d+1\) distinct points. This can be done using the Fast Fourier Transform (FFT).
 \section{Bigger Picture} 
-The goal is to convert the coefficient representation of $A(x) $ and $B(x)$ to the value representation. Then we can calculate the convolution of the two sequences of values. Finally, we can convert the value representation of the product of the two polynomials to the coefficient representation. \newline
-Conversion of the coefficient representation to the value representation can be done using the FFT. And the reverse process can be done using the inverse FFT. \newline
+The goal is to convert the coefficient representation of $A(x) $ and $B(x)$ to the value representation. Then we can calculate the convolution of the two sequences of values. Finally, we can convert the value representation of the product of the two polynomials to the coefficient representation. Conversion of the coefficient representation to the value representation can be done using the FFT. And the reverse process can be done using the inverse FFT. \newline
 
+\begin{figure}
+    \centering
+    
+\begin{tikzpicture}[start node=First]
+    \node[draw, rectangle, black, thick, trapezium left angle=70, trapezium right angle=110, text width=5cm, text centered] (A) {
+      $$A(x) = a_0 + a_1x + a_2x^2 + ... a_dx^d$$
+      $$B(x) = b_0 + b_1x + b_2x^2 + ... b_dx^d$$
+    };
+
+    \node[draw, trapezium, black,fill=green!50, thick, trapezium left angle=90, trapezium right angle=90, text width=4cm, text centered, below of=A, yshift=-1cm] (CoEffToVal) {
+      Coefficient to Value
+    };
+
+    \node[draw, trapezium, black, thick, trapezium left angle=90, trapezium right angle=90, text width=4cm, text centered, below of=CoEffToVal] (Mult) {
+      Multiply in O(d)
+    };
+
+    \node[draw, trapezium, black, thick,fill=cyan!50, trapezium left angle=90, trapezium right angle=90, text width=4cm, text centered, below of=Mult, xshift=6cm, yshift=1cm] (ValToCoeff) {
+      Value to Coefficient
+    };
+    
+    
+    \node[draw, trapezium, black, thick, trapezium left angle=90, trapezium right angle=90, text width=5cm, text centered, above of=ValToCoeff, yshift=2cm] (C) {
+      $$C(x) = c_0 + c_1x + c_2x^2 + ... c_dx^d$$
+    };
+
+    \draw[black, thick, ->] (A.south) -| (CoEffToVal.north);
+    \draw[black, thick, ->] (CoEffToVal.south) -- (Mult.north);
+    \draw[black, thick, ->] (Mult.east) -- (ValToCoeff.west);
+    \draw[black, thick, ->] (ValToCoeff.north) -- (C.south);
+\end{tikzpicture}
+
+
+    \caption{Work flow}
+\end{figure}
 \section{Coefficient to Value Representation}
 To get \(d+1\) distinct points, we can use the \(d+1\) roots of unity. The \(d+1\) roots of unity are the complex numbers \(1, \omega, \omega^2, \ldots, \omega^d\) where \(\omega = e^{2\pi i/(d+1)}\). The polynomial \(A(x)\) can be represented as the sequence \(A(1), A(\omega), A(\omega^2), \ldots, A(\omega^d)\). The polynomial \(B(x)\) can also be represented as the sequence \(B(1), B(\omega), B(\omega^2), \ldots, B(\omega^d)\). The product of two polynomials can be represented as the convolution of the two sequences of values.
 
 
-\section{What's the problem}
+\section{What's the problem?}
 Now, we have the domain of the polynomials as the \(d+1\) roots of unity. But as we need to evaluate the value representation of each of the polynomial at \(d+1\) distinct points, this is still \(O(d^2)\). Can we do better? 
 
 \section{Solution: even function}
@@ -240,10 +268,13 @@ So, for a polynomial of degree \(d\), we need \(n \geq d + 1\) points to evaluat
 
 
 \section{Why does this work?}
-For any of $j$th root of unity $\omega^j = - \omega^{j + n/2} \implies (\omega^j and \omega^{j + n/2})$ are $\pm$ pairs.\\
+For any of $j$th root of unity $\omega^j = - \omega^{j + n/2} \implies (\omega^j \text{ and } \omega^{j + n/2})$ are $\pm$ pairs.\\
 
 
-	\includegraphics[width=0.5\textwidth]{images/rootsOfUnity.jpg}
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{images/rootsOfUnity.jpg}
+\end{center}
+
  
 \section{Finalize}
 For a polynomial $P(x)$ we can now convert the coefficients of the polynomial to the values of the polynomial at \(n\) distinct points using the FFT. We can then calculate the convolution of two sequences of values. 
@@ -288,7 +319,7 @@ We can represent this as \textit{Matrix Multiplication} as follows:
 	\end{equation*}
 \newline
 
-In forward FFT, the $n$th roots of unity was used to evaluate a polynomial of $n-1$ degree. So, we can replace $x_k$ with $\omega^k$, where $\omega_i = e^{\frac{2\pi i}{n}}$
+In forward FFT, the $n$th roots of unity was used to evaluate a polynomial of $n-1$ degree. So, we can replace $x_k$ with $\omega^k$, where $\omega = e^{\frac{2\pi i}{n}}$
 
 \begin{equation*}
   \begin{bmatrix}
@@ -315,6 +346,8 @@ In forward FFT, the $n$th roots of unity was used to evaluate a polynomial of $n
     \end{bmatrix}
 \end{equation*}
 This matrix is called the \textit{Vandermonde Matrix}.
+\newline
+\newline
 Here we need to get the values of $[p_0, p_1, ... , p_{n-1}]$. We can rewrite the equation as follows:
 \begin{equation*}
     \begin{bmatrix}
@@ -402,6 +435,7 @@ def FFT(P):
 	return y
 \end{minted}
 
+\newpage
 \section{Inverse FFT} 
 
 \begin{minted}{python}
@@ -409,7 +443,7 @@ import cmath
 import math
 
 def IFFT(P):
-	# P - [p_0, p_1, p_2, ... , p_n-1] coeff representation
+	# P - [p_0, p_1, p_2, ... , p_n-1] value representation
 	n = len(P) # n = 2^k
 	if n == 1:
 		return P
