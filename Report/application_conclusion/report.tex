@@ -1,0 +1,147 @@
+\documentclass{report}
+\usepackage{graphicx} % Required for inserting images
+\usepackage[a4paper, total={6in, 9in}]{geometry}
+\usepackage{amsmath}
+% \usepackage{minted}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Fast Fourier transform}
+    }
+
+% \urlstyle{same}
+\title{Fast Fourier transform}
+\author{Tanvir}
+% \subtitle{Revolutionizing algorithm}
+% \author[Turad \and Tanvir \and Jakaria]
+% {Md. Tanvirul Islam Turad (2005011)\\
+% Tanvir Hossain (2005014)\\
+% Md. Jakaria Hossain (2005026)\\}
+% \institute[CSE, BUET]
+% {
+% 	Department of CSE\\
+% 	Bangladesh University of Engineering and Technology
+% }
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\newpage
+\chapter{Introduction}
+% \section{Introduction}
+ltiplying two numbers of size $10^6$, but at some point the range and the precision of the used floating point numbers will not no longer be enough to give accurate results. That is usually enough for solving competitive programming problems, but there are also more complex variations that can perform arbitrary large polynomial/integer multiplications. E.g. in 1971 Schönhage and Strasser developed a variation for multiplying arbitrary large numbers that applies the FFT recursively in rings structures running in $O(n \log n \log \log n)$. And recently (in 2019) Harvey and van der Hoeven published an algorithm that runs in true $O(n \log n)$.
+
+\chapter{Discrete Fourier transform}
+
+Let there be a polynomial of degree $n - 1$:
+\[A(x) = a_0 x^0 + a_1 x^1 + \cdots + a_{n-1} x^{n-1}\]
+
+Without loss of generality we assume that $n$ - the number of coefficients - is a power of $2$. If $n$ is not a power of $2$, then we simply add the missing terms $a_i x^i$ and set the coefficients $a_i$ to $0$.
+
+The theory of complex numbers tells us that the equation $x^n = 1$ has $n$ complex solutions (called the $n$-th roots of unity), and the solutions are of the form $w_{n, k} = e^{\frac{2 k \pi i}{n}}$ with $k = 0 \cdots n-1$. Additionally these complex numbers have some very interesting properties: e.g.\  the principal $n$-th root $w_n = w_{n, 1} = e^{\frac{2 \pi i}{n}}$ can be used to describe all other $n$-th roots: $w_{n, k} = (w_n)^k$.
+
+The discrete Fourier transform (DFT) of the polynomial $A(x)$ or equivalently the vector of coefficients $(a_0, a_1, \dots, a_{n-1})$ is defined as the values of the polynomial at the points $x = w_{n, k}$, i.e. it is the vector:
+\newpage
+\chapter{Applications}
+
+DFT can be used in a huge variety of other problems, which at the first glance have nothing to do with multiplying polynomials.
+
+\section{All possible sums}
+
+We are given two arrays $a[]$ and $b[]$. We have to find all possible sums $a[i] + b[j]$, and for each sum count how often it appears.
+
+For example for $a = [1,~ 2,~ 3]$ and $b = [2,~ 4]$ we get: then sum $3$ can be obtained in $1$ way, the sum $4$ also in $1$ way, $5$ in $2$, $6$ in $1$, $7$ in $1$.
+
+We construct for the arrays $a$ and $b$ two polynomials $A$ and $B$. The numbers of the array will act as the exponents in the polynomial ($a[i] \Rightarrow x^{a[i]}$); and the coefficients of this term will be how often the number appears in the array.
+
+Then, by multiplying these two polynomials in $O(n \log n)$ time, we get a polynomial $C$, where the exponents will tell us which sums can be obtained, and the coefficients tell us how often. To demonstrate this on the example:
+$$(1 x^1 + 1 x^2 + 1 x^3) (1 x^2 + 1 x^4) = 1 x^3 + 1 x^4 + 2 x^5 + 1 x^6 + 1 x^7$$
+
+\section{All possible scalar products}
+
+We are given two arrays $a[]$ and $b[]$ of length $n$. We have to compute the products of $a$ with every cyclic shift of $b$.
+
+We generate two new arrays of size $2n$: We reverse $a$ and append $n$ zeros to it. And we just append $b$ to itself. When we multiply these two arrays as polynomials, and look at the coefficients $c[n-1],~ c[n],~ \dots,~ c[2n-2]$ of the product $c$, we get:
+$$c[k] = \sum_{i+j=k} a[i] b[j]$$
+
+And since all the elements $a[i] = 0$ for $i \ge n$:
+$$c[k] = \sum_{i=0}^{n-1} a[i] b[k-i]$$
+
+It is easy to see that this sum is just the scalar product of the vector $a$ with the $(k - (n - 1))$-th cyclic left shift of $b$. Thus these coefficients are the answer to the problem, and we were still able to obtain it in $O(n \log n)$ time. Note here that $c[2n-1]$ also gives us the $n$-th cyclic shift but that is the same as the $0$-th cyclic shift so we don't need to consider that separately into our answer.
+
+\section{Two stripes}
+
+We are given two Boolean stripes (cyclic arrays of values $0$ and $1$) $a$ and $b$. We want to find all ways to attach the first stripe to the second one, such that at no position we have a $1$ of the first stripe next to a $1$ of the second stripe.
+
+The problem doesn't actually differ much from the previous problem. Attaching two stripes just means that we perform a cyclic shift on the second array, and we can attach the two stripes, if scalar product of the two arrays is $0$.
+
+\section{String matching}
+
+We are given two strings, a text $T$ and a pattern $P$, consisting of lowercase letters. We have to compute all the occurrences of the pattern in the text.
+
+We create a polynomial for each string ($T[i]$ and $P[I]$ are numbers between $0$ and $25$ corresponding to the $26$ letters of the alphabet):
+$$A(x) = a_0 x^0 + a_1 x^1 + \dots + a_{n-1} x^{n-1}, \quad n = |T|$$
+
+with
+$$a_i = \cos(\alpha_i) + i \sin(\alpha_i), \quad \alpha_i = \frac{2 \pi T[i]}{26}.$$
+
+And
+$$B(x) = b_0 x^0 + b_1 x^1 + \dots + b_{m-1} x^{m-1}, \quad m = |P|$$
+
+with
+$$b_i = \cos(\beta_i) - i \sin(\beta_i), \quad \beta_i = \frac{2 \pi P[m-i-1]}{26}.$$
+
+Notice that with the expression $P[m-i-1]$ explicitly reverses the pattern.
+
+The $(m-1+i)$th coefficients of the product of the two polynomials $C(x) = A(x) \cdot B(x)$ will tell us, if the pattern appears in the text at position $i$.
+$$c_{m-1+i} = \sum_{j = 0}^{m-1} a_{i+j} \cdot b_{m-1-j} = \sum_{j=0}^{m-1} \left(\cos(\alpha_{i+j}) + i \sin(\alpha_{i+j})\right) \cdot \left(\cos(\beta_j) - i \sin(\beta_j)\right)$$
+
+with $\alpha_{i+j} = \frac{2 \pi T[i+j]}{26}$ and $\beta_j = \frac{2 \pi P[j]}{26}$
+
+If there is a match, than $T[i+j] = P[j]$, and therefore $\alpha_{i+j} = \beta_j$. This gives (using the Pythagorean trigonometric identity):
+$$\begin{align} c_{m-1+i} &= \sum_{j = 0}^{m-1} \left(\cos(\alpha_{i+j}) + i \sin(\alpha_{i+j})\right) \cdot \left(\cos(\alpha_{i+j}) - i \sin(\alpha_{i+j})\right) \\ &= \sum_{j = 0}^{m-1} \cos(\alpha_{i+j})^2 + \sin(\alpha_{i+j})^2 = \sum_{j = 0}^{m-1} 1 = m \end{align}$$
+
+If there isn't a match, then at least a character is different, which leads that one of the products $a_{i+1} \cdot b_{m-1-j}$ is not equal to $1$, which leads to the coefficient $c_{m-1+i} \ne m$.
+
+\section{String matching with wildcards}
+
+This is an extension of the previous problem. This time we allow that the pattern contains the wildcard character $\*$, which can match every possible letter. E.g. the pattern $a*c$ appears in the text $abccaacc$ at exactly three positions, at index $0$, index $4$ and index $5$.
+
+We create the exact same polynomials, except that we set $b_i = 0$ if $P[m-i-1] = *$. If $x$ is the number of wildcards in $P$, then we will have a match of $P$ in $T$ at index $i$ if $c_{m-1+i} = m - x$.
+
+\newpage
+
+\section*{Practice problems}
+
+
+\href{https://www.spoj.com/problems/POLYMUL/}{POLYMUL - Polynomial Multiplication}
+
+\href{https://www.spoj.com/problems/MAXMATCH/}{MAXMATCH - Maximum Self-Matching}
+
+\href{https://www.spoj.com/problems/ADAMATCH/}{ADAMATCH - Ada and Nucleobase}
+
+\href{https://codeforces.com/problemset/problem/954/I}{Yet Another String Matching Problem}
+
+\href{https://codeforces.com/problemset/problem/958/F3}{Lightsabers (hard)}
+
+\href{https://codeforces.com/contest/1398/problem/G}{Running Competition}
+
+\href{https://codeforces.com/contest/754/problem/E}{Dasha and cyclic table}
+
+\href{https://codeforces.com/problemset/problem/1667/E}{Centroid Probabilities}
+
+\href{https://www.codechef.com/COOK112A/problems/MMNN01}{Expected Number of Customer}
+
+\href{https://www.codechef.com/SEPT19A/problems/PSUM}{Power Sum}
+
+\href{https://open.kattis.com/problems/aplusb}{A+B Problem}
+
+\href{https://open.kattis.com/problems/kinversions}{K-Inversions}
+\end{document}
